@@ -1,0 +1,7 @@
+- name: "setup gitlab"
+  hosts: myhosts
+  vars_files:
+    - group_vars/all.yaml
+  become: true
+  roles:
+    - helm-gitlab

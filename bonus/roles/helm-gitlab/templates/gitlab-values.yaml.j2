@@ -1,0 +1,62 @@
+global:
+  edition: ce
+  hosts:
+    domain: "{{ server_ip }}.nip.io"
+    https: false
+  ingress:
+    configureCertmanager: false
+    enabled: true
+    class: traefik
+    tls:
+      enabled: false
+
+  minio:
+    enabled: false
+  kas:
+    enabled: false
+  appConfig:
+    enableUsagePing: false
+    enableCrashReporting: false
+    enableSeatLink: false
+    enableOutgoingEmail: false
+    enableLDAP: false
+    lfs:
+      enabled: false
+    artifacts:
+      enabled: false
+    uploads:
+      enabled: false
+    packages:
+      enabled: false
+
+gitlab:
+  webservice:
+    ingress:
+      annotations:
+        kubernetes.io/ingress.class: "traefik"
+
+  sidekiq:
+    enabled: false
+  toolbox:
+    enabled: false
+  gitlab-exporter:
+    enabled: false
+
+installCertmanager: false
+
+registry:
+  enabled: false
+
+prometheus:
+  install: false
+
+gitlab-runner:
+  install: false
+
+nginx-ingress:
+  enabled: false
+
+postgresql:
+  install: true
+  metrics:
+    enabled: false

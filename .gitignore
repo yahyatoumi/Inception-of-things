@@ -1,0 +1,6 @@
+**/*image.tar
+.vagrant/
+/**/.vagrant
+/**/*password.txt
+/**/*.sha256
+/**/kubectl

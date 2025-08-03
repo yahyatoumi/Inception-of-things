@@ -1,0 +1,27 @@
+---
+# tasks file for argocd
+- name: Ensure setups directory exits
+  ansible.builtin.file:
+    path: "{{ base_dir }}/setups"
+    state: directory
+    mode: "0755"
+
+- name: "copy helm values"
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ base_dir }}{{ item.dest }}"
+    mode: "0755"
+  loop:
+    - {src: "setup-cluster.sh.j2", dest: "/setups/setup-cluster.sh"}
+    - {src: "setup-helm.sh.j2", dest: "/setups/setup-helm.sh"}
+
+- name: Execute the setup script
+  ansible.builtin.shell: "{{ base_dir }}/setups/setup-cluster.sh"
+  args:
+    executable: /bin/bash
+
+- name: Execute helm script
+  ansible.builtin.shell: "{{ base_dir }}/setups/setup-helm.sh"
+  args:
+    executable: /bin/bash
+

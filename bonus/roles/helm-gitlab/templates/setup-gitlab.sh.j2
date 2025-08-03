@@ -1,0 +1,38 @@
+#!/bin/bash
+set -e
+
+echo "Adding GitLab Helm repository..."
+helm repo add gitlab https://charts.gitlab.io/
+
+# Update Helm repositories
+echo "Updating Helm repositories..."
+helm repo update
+
+# Check if the namespace 'gitlab' exists, create it if it doesn't
+if ! kubectl get namespace gitlab >/dev/null 2>&1; then
+    echo "Namespace 'gitlab' does not exist. Creating it..."
+    kubectl create namespace gitlab
+fi
+
+
+# Install or upgrade GitLab using Helm
+if helm status gitlab -n gitlab >/dev/null 2>&1; then
+    echo "Helm release 'gitlab' is already installed. Skipping installation."
+else
+    echo "Helm release 'gitlab' is not installed. Proceeding with installation..."
+    helm install gitlab gitlab/gitlab \
+        --namespace gitlab \
+        --values {{ base_dir }}/helm-gitlab/gitlab-values.yaml
+fi
+# Wait for all GitLab pods to be ready
+echo "Waiting for GitLab pods to be ready..."
+
+
+while ! kubectl get pods -n gitlab | grep -v 'Running\|Completed'; do
+  echo "Waiting for all pods to be running..."
+  sleep 10
+done
+
+kubectl wait --namespace gitlab --for=condition=available deployment --timeout=10000s -l app=webservice
+
+echo "GitLab setup completed successfully."

@@ -1,0 +1,29 @@
+
+SERVER_IP="192.168.56.110"
+
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "hashicorp/bionic64"
+  config.vm.box_version = "1.0.282"
+  
+  config.vm.define "ytoumiS" do |ytoumiS|
+    
+    ytoumiS.vm.provider "virtualbox" do |vb|
+      vb.cpus = 2
+      vb.memory = 2048
+    end
+
+    ytoumiS.vm.hostname = "ytoumiS"
+    ytoumiS.vm.network "private_network", ip: SERVER_IP
+    # ytoumiS.vm.network "forwarded_port", guest: 6443, host: 6443
+
+    ytoumiS.vm.synced_folder "./confs/app1", "/home/vagrant/app1", create: true
+    ytoumiS.vm.synced_folder "./confs/app2", "/home/vagrant/app2", create: true
+    ytoumiS.vm.synced_folder "./confs/app3", "/home/vagrant/app3", create: true
+    ytoumiS.vm.synced_folder "./confs/ingress", "/home/vagrant/ingress", create: true
+
+
+    ytoumiS.vm.provision "shell", name: "setup-script", path: "scripts/setup-script.sh"
+  end
+
+end

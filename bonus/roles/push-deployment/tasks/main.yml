@@ -1,0 +1,29 @@
+---
+# tasks file for argocd
+- name: Ensure {{ app_name }} directory exits
+  ansible.builtin.file:
+    path: "{{ base_dir }}/{{ app_name }}"
+    state: directory
+    mode: "0755"
+
+- name: Ensure argocd-app directory exits
+  ansible.builtin.file:
+    path: "{{ base_dir }}/{{ app_name }}/app"
+    state: directory
+    mode: "0755"
+
+- name: "copy app"
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ base_dir }}{{ item.dest }}"
+    mode: "0755"
+  loop:
+    - {src: "push-deployment.sh.j2", dest: "/setups/push-deployment.sh"}
+    - {src: "argocd-app/deployment.yaml.j2", dest: "/{{ app_name }}/app/deployment.yaml"}
+    - {src: "argocd-app/ingress.yaml.j2", dest: "/{{ app_name }}/app/ingress.yaml"}
+    - {src: "argocd-app/service.yaml.j2", dest: "/{{ app_name }}/app/service.yaml"}
+
+- name: Execute the setup script
+  ansible.builtin.shell: "{{ base_dir }}/setups/push-deployment.sh"
+  args:
+    executable: /bin/bash

@@ -1,0 +1,14 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: playground
+  namespace: dev
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`playground.{{ server_ip }}.nip.io`)
+      kind: Rule
+      services:
+        - name: playground-service
+          port: 80

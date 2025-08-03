@@ -1,0 +1,8 @@
+- name: "setup cluster"
+  hosts: myhosts
+  vars_files:
+    - group_vars/all.yaml
+    - group_vars/gitlab-token.yaml
+  become: true
+  roles:
+    - push-deployment

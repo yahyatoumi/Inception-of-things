@@ -1,0 +1,28 @@
+---
+# tasks file for argocd
+- name: Ensure argocd-conf directory exits
+  ansible.builtin.file:
+    path: "{{ base_dir }}/argocd-conf"
+    state: directory
+    mode: "0755"
+
+- name: Ensure setups directory exits
+  ansible.builtin.file:
+    path: "{{ base_dir }}/setups"
+    state: directory
+    mode: "0755"
+
+- name: "copy argocd configuration files"
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ base_dir }}{{ item.dest }}"
+    mode: "0755"
+  loop:
+    - {src: "application.yaml.j2", dest: "/argocd-conf/application.yaml"}
+    - {src: "argocd-ingress.yaml.j2", dest: "/argocd-conf/argocd-ingress.yaml"}
+    - {src: "setup-argocd.sh.j2", dest: "/setups/setup-argocd.sh"}
+
+- name: Execute the setup script
+  ansible.builtin.shell: "{{ base_dir }}/setups/setup-argocd.sh"
+  args:
+    executable: /bin/bash

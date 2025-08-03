@@ -1,0 +1,54 @@
+
+# Service configuration reference
+SERVICES = {
+  'ytoumiS' => {
+    ip: '192.168.56.110',
+    port: 6443,
+  },
+  'ytoumiSW' => {
+    ip: '192.168.56.111',
+  }
+}
+
+Vagrant.configure("2") do |config|
+  # config.vm.box = "hashicorp-education/ubuntu-24-04"
+  # config.vm.box_version = "0.1.0"
+
+  config.vm.box = "hashicorp/bionic64"
+  config.vm.box_version = "1.0.282"
+
+  # ytoumiS Server
+  config.vm.define "ytoumiS" do |ytoumiS|
+
+    ytoumiS.vm.provider "virtualbox" do |vb|
+      vb.cpus = 1
+      vb.memory = 1024
+    end
+
+    ytoumiS.vm.hostname = "ytoumiS"
+    ytoumiS.vm.network "private_network", ip: SERVICES['ytoumiS'][:ip]
+    # ytoumiS.vm.network "forwarded_port", guest: SERVICES['ytoumiS'][:port], host: SERVICES['ytoumiS'][:port]
+    ytoumiS.vm.synced_folder "./confs/token", "/home/vagrant/token", create: true
+
+
+
+    ytoumiS.vm.provision "shell", name: "server-script", path: "scripts/k3s-server.sh", args: [SERVICES['ytoumiS'][:ip]]
+  end
+
+  # ytoumiSW Server
+  config.vm.define "ytoumiSW" do |ytoumiSW|
+
+    ytoumiSW.vm.provider "virtualbox" do |vb|
+      vb.cpus = 1
+      vb.memory = 512
+    end
+
+    ytoumiSW.vm.hostname = "ytoumiSW"
+    ytoumiSW.vm.network "private_network", ip: SERVICES['ytoumiSW'][:ip]
+    # ytoumiSW.vm.network "forwarded_port", guest: 8081, host: 8081
+    ytoumiSW.vm.synced_folder "./confs/token", "/home/vagrant/token", create: true
+
+
+    ytoumiSW.vm.provision "shell", name: "server-worker-script", path: "scripts/k3s-agent.sh", args: [SERVICES['ytoumiS'][:ip], SERVICES['ytoumiS'][:port], SERVICES['ytoumiSW'][:ip]]
+  end
+end

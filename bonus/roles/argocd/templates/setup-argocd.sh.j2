@@ -1,0 +1,27 @@
+#!/bin/bash
+set -e
+
+if ! kubectl get namespace argocd >/dev/null 2>&1; then
+  echo "Namespace 'argocd' does not exist. Creating it..."
+  kubectl create namespace argocd
+fi
+
+echo "Applying ArgoCD manifests..."
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+echo "Waiting for ArgoCD pods to be ready..."
+kubectl wait --for=condition=Ready pods --all -n argocd --timeout=10000s
+
+echo "Applying ArgoCD ingress configuration..."
+kubectl apply -n argocd -f {{ base_dir }}/argocd-conf/argocd-ingress.yaml
+
+echo "Patching ArgoCD configmap to enable insecure mode..."
+kubectl patch configmap argocd-cmd-params-cm -n argocd --type merge -p '{"data":{"server.insecure": "true"}}'
+
+echo "Restarting ArgoCD server deployment..."
+kubectl rollout restart deployment argocd-server -n argocd
+
+echo "applying ArgoCD application..."
+kubectl apply -f {{ base_dir }}/argocd-conf/application.yaml
+
+echo "ArgoCD setup completed successfully."

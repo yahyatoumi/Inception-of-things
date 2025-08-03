@@ -1,0 +1,45 @@
+#!/bin/bash
+
+GITLAB_DOMAIN="gitlab.{{ server_ip }}.nip.io"
+GITLAB_URL="http://$GITLAB_DOMAIN"
+APP_NAME="{{ app_name }}"
+NAMESPACE="root"
+LOCAL_APP_PATH="{{ base_dir }}/{{app_name}}/"
+GITLAB_TOKEN="{{ access_token }}"
+
+echo "[INFO] Waiting for GitLab to respond at $GITLAB_URL ..."
+until curl --silent --fail "$GITLAB_URL/users/sign_in" > /dev/null; do
+  echo -n "."
+  sleep 5
+done
+echo -e "\n[INFO] GitLab is now reachable."
+
+echo "[INFO] Checking if project '$APP_NAME' exists in GitLab..."
+PROJECT_ID=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "$GITLAB_URL/api/v4/projects?search=$APP_NAME" \
+  | jq -r ".[] | select(.path==\"$APP_NAME\") | .id")
+
+if [ -z "$PROJECT_ID" ]; then
+  echo "[INFO] Creating new GitLab project: $APP_NAME"
+  curl -s --request POST "$GITLAB_URL/api/v4/projects" \
+    --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+    --form "name=$APP_NAME" \
+    --form "visibility=public"
+else
+  echo "[INFO] Project already exists (ID: $PROJECT_ID)"
+fi
+
+echo "[INFO] Preparing to push application code to GitLab..."
+echo "$LOCAL_APP_PATH"
+cd "$LOCAL_APP_PATH" || { echo "[ERROR] App path not found"; exit 1; }
+
+git init
+git config user.name "root"
+git config user.email "root@gitlab.local"
+git remote remove origin 2>/dev/null
+git remote add origin "$GITLAB_URL/$NAMESPACE/$APP_NAME.git"
+
+git add .
+git commit -m "Initial automated push"
+git push --force "http://root:$GITLAB_TOKEN@$GITLAB_DOMAIN/$NAMESPACE/$APP_NAME.git" master
+
+echo "[SUCCESS] Application pushed to GitLab at: $GITLAB_URL/$NAMESPACE/$APP_NAME"

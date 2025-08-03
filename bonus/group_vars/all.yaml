@@ -1,0 +1,6 @@
+base_dir: /root/gitlab
+server_ip: 104.248.195.65
+cluster_name: "iot-cluster"
+output_file: /etc/output_file.txt
+app_name: argoc-ael-yamo
+vault_gitlab_token: token_here

@@ -1,0 +1,22 @@
+#!/bin/bash
+set -e pipefail
+
+# Output file for storing passwords
+OUTPUT_FILE={{ output_file }}
+
+# Retrieve GitLab root password
+echo "Retrieving GitLab root password..."
+GITLAB_SECRET=$(kubectl get secret -n gitlab gitlab-gitlab-initial-root-password -o jsonpath="{.data.password}" | base64 --decode)
+
+# Retrieve ArgoCD admin password
+echo "Retrieving ArgoCD admin password..."
+ARGOCD_SECRET=$(kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode)
+
+# Store passwords in a file
+echo "Storing passwords in $OUTPUT_FILE..."
+cat <<EOF > "$OUTPUT_FILE"
+GitLab Root Password: $GITLAB_SECRET
+ArgoCD Admin Password: $ARGOCD_SECRET
+EOF
+
+echo "Passwords have been successfully retrieved and stored in $OUTPUT_FILE."

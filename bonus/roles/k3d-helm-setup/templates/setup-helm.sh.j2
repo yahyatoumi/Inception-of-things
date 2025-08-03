@@ -1,0 +1,11 @@
+#!/bin/bash
+
+HELM_SCRIPT_URL="https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3"
+
+curl -fsSL -o get_helm.sh "$HELM_SCRIPT_URL" || { echo "Failed to download Helm script"; exit 1; }
+
+chmod 700 get_helm.sh || { echo "Failed to set permissions on Helm script"; exit 1; }
+
+./get_helm.sh || { echo "Failed to execute Helm script"; exit 1; }
+
+rm -f get_helm.sh

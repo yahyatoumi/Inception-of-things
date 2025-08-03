@@ -1,0 +1,7 @@
+- name: "setup cluster"
+  hosts: myhosts
+  vars_files:
+    - group_vars/all.yaml
+  become: true
+  roles:
+    - k3d-helm-setup

@@ -1,0 +1,6 @@
+#!/bin/bash
+helm uninstall -n gitlab gitlab
+helm repo remove gitlab
+kubectl delete pvc --all -n gitlab
+
+echo "Cleanup completed."

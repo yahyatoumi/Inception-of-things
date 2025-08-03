@@ -1,0 +1,8 @@
+- name: "setup argocd with gitlab"
+  hosts: myhosts
+  vars_files:
+    - group_vars/all.yaml
+  become: true
+  roles:
+    - cleanup
+    

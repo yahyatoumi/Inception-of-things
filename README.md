@@ -54,10 +54,11 @@ inception-of-things/
 │   ├── scripts/
 │   │   └── setup-script.sh
 │   └── confs/
-├── bonus/                  # Bonus: GitLab Integration
+├── bonus/                  # Bonus: GitLab Integration with Ansible
 │   ├── scripts/
 │   ├── confs/
-│   └── group_vars/
+│   ├── group_vars/        # Ansible variables
+│   ├── playbooks/         # Ansible playbooks
 └── README.md
 ```
 
@@ -70,6 +71,7 @@ inception-of-things/
 - **[Argo CD](https://argoproj.github.io/argo-cd/)** - GitOps continuous delivery tool
 - **[Kubernetes](https://kubernetes.io/)** - Container orchestration
 - **[GitLab](https://gitlab.com/)** - DevOps platform (Bonus)
+- **[Ansible](https://www.ansible.com/)** - Configuration management and automation (Bonus)
 
 ## 📋 Prerequisites
 
@@ -79,6 +81,7 @@ Before running this project, ensure you have the following installed:
 - **Vagrant** (≥ 2.2)
 - **Docker** (≥ 20.10)
 - **kubectl** (Kubernetes CLI)
+- **Ansible** (≥ 2.9) - For bonus part
 - **Git**
 
 ### System Requirements
@@ -104,6 +107,7 @@ Before running this project, ensure you have the following installed:
    vagrant --version
    docker --version
    kubectl version --client
+   ansible --version  # For bonus part
    ```
 
 ## 💻 Usage
@@ -187,20 +191,29 @@ kubectl port-forward svc/argocd-server -n argocd 8080:443
 # Visit: https://localhost:8080
 ```
 
-### Bonus: GitLab Integration
+### Bonus: GitLab Integration with Ansible
 
-**Objective:** Integrate GitLab with the K3d cluster for complete CI/CD
+**Objective:** Integrate GitLab with the K3d cluster using Ansible for automated CI/CD
 
 **What you'll learn:**
-- GitLab Runner setup
+- Ansible playbook development
+- Infrastructure automation with Ansible
+- GitLab Runner setup and configuration
 - CI/CD pipeline configuration
-- Integration with Kubernetes
-- Advanced GitOps workflows
+- Integration with Kubernetes using Ansible
+- Advanced GitOps workflows with automation
+
+**Features:**
+- Automated GitLab deployment using Ansible
+- Ansible-managed Kubernetes resources
+- Configuration management with Ansible variables
+- Automated CI/CD pipeline setup
 
 **Setup:**
 ```bash
 cd bonus
-# Follow specific instructions in bonus/README.md
+# Configure your inventory and variables
+ansible-playbook -i inventory/hosts playbooks/deploy.yml
 ```
 
 ## 🎓 Learning Objectives
@@ -209,6 +222,7 @@ By completing this project, you will gain practical experience with:
 
 - **Container Orchestration:** Understanding Kubernetes concepts and operations
 - **Infrastructure as Code:** Using Vagrant for reproducible environments
+- **Configuration Management:** Automating deployments with Ansible
 - **GitOps:** Implementing continuous deployment with Argo CD
 - **Service Mesh:** Managing microservices communication
 - **DevOps Practices:** Setting up complete CI/CD pipelines
@@ -221,6 +235,7 @@ By completing this project, you will gain practical experience with:
 - [K3s Documentation](https://docs.k3s.io/)
 - [K3d Documentation](https://k3d.io/v5.4.6/)
 - [Argo CD Documentation](https://argo-cd.readthedocs.io/)
+- [Ansible Documentation](https://docs.ansible.com/)
 - [Vagrant Documentation](https://www.vagrantup.com/docs)
 
 ### Useful Commands
@@ -257,23 +272,3 @@ This is a school project, but suggestions and improvements are welcome! Please f
 3. Commit your changes (`git commit -am 'Add some improvement'`)
 4. Push to the branch (`git push origin feature/improvement`)
 5. Create a Pull Request
-
-## 📝 License
-
-This project is part of the 42 School curriculum and is for educational purposes only.
-
-## 👨‍💻 Author
-
-**Yahya Toumi**
-- GitHub: [@yahyatoumi](https://github.com/yahyatoumi)
-- 42 Login: `ytoumi`
-
----
-
-<div align="center">
-
-**Made with ❤️ at 42 School**
-
-*If you found this project helpful, please consider giving it a ⭐*
-
-</div>

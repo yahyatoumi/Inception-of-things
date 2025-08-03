@@ -26,7 +26,6 @@
   - [Bonus: GitLab Integration](#bonus-gitlab-integration)
 - [Learning Objectives](#learning-objectives)
 - [Resources](#resources)
-- [Author](#author)
 
 ## 🎯 About
 

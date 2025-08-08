@@ -7,7 +7,7 @@
 ![Vagrant](https://img.shields.io/badge/vagrant-%231563FF.svg?style=flat&logo=vagrant&logoColor=white)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=flat&logo=docker&logoColor=white)
 
-*A 42 School system administration project introducing Kubernetes from a developer perspective*
+*A system administration project introducing Kubernetes from a developer perspective*
 
 </div>
 
